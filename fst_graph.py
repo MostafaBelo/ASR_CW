@@ -125,13 +125,18 @@ def generate_symbol_tables(lexicon, n=3):
     for word in list(lexicon):
         for phone in lexicon[word]:
             phone_table.add_symbol(phone)
+    phone_table.add_symbol('sil')
     
     state_table.add_symbol('<eps>')
     for word in list(lexicon):
         for phone in lexicon[word]:
             for i in range(n):
                 state_table.add_symbol(f"{phone}_{i+1}")
-    
+    state_table.add_symbol('sil_1')
+    state_table.add_symbol('sil_2')
+    state_table.add_symbol('sil_3')
+    state_table.add_symbol('sil_4')
+    state_table.add_symbol('sil_5')
 
     return word_table, phone_table, state_table
 
@@ -216,7 +221,8 @@ def generate_word_sequence_recognition_wfst(n = 3):
     
     silence_start = f.add_state()
     silence_end = silence_model(f, silence_start)
-    f.add_arc(silence_end, fst.Arc(0, 0, weighter.get_split(f, silence_end, 1), start_state))
+    sil_symbol = state_table.find("sil_5")
+    f.add_arc(silence_end, fst.Arc(sil_symbol, 0, weighter.get_split(f, silence_end, 1), start_state))
     
     N = len(lex.keys())
     
@@ -288,25 +294,31 @@ def silence_model(f, start_state):
     s4 = f.add_state()
     s5 = f.add_state()
     
-    f.add_arc(s1, fst.Arc(0, 0, weighter.get_self_loop(), s1))
-    f.add_arc(s1, fst.Arc(0, 0, weighter.get_split(f, s1, 1), s2))
+    sil1 = state_table.find("sil_1")
+    sil2 = state_table.find("sil_2")
+    sil3 = state_table.find("sil_3")
+    sil4 = state_table.find("sil_4")
+    sil5 = state_table.find("sil_5")
+    
+    f.add_arc(s1, fst.Arc(sil1, 0, weighter.get_self_loop(), s1))
+    f.add_arc(s1, fst.Arc(sil1, 0, weighter.get_split(f, s1, 1), s2))
     
     w = weighter.get_split(f, s2, 3)
-    f.add_arc(s2, fst.Arc(0, 0, w, s2))
-    f.add_arc(s2, fst.Arc(0, 0, w, s3))
-    f.add_arc(s2, fst.Arc(0, 0, w, s4))
+    f.add_arc(s2, fst.Arc(sil2, 0, w, s2))
+    f.add_arc(s2, fst.Arc(sil2, 0, w, s3))
+    f.add_arc(s2, fst.Arc(sil2, 0, w, s4))
     
     w = weighter.get_split(f, s3, 3)
-    f.add_arc(s3, fst.Arc(0, 0, w, s2))
-    f.add_arc(s3, fst.Arc(0, 0, w, s3))
-    f.add_arc(s3, fst.Arc(0, 0, w, s4))
+    f.add_arc(s3, fst.Arc(sil3, 0, w, s2))
+    f.add_arc(s3, fst.Arc(sil3, 0, w, s3))
+    f.add_arc(s3, fst.Arc(sil3, 0, w, s4))
     
     w = weighter.get_split(f, s4, 4)
-    f.add_arc(s4, fst.Arc(0, 0, w, s2))
-    f.add_arc(s4, fst.Arc(0, 0, w, s3))
-    f.add_arc(s4, fst.Arc(0, 0, w, s4))
-    f.add_arc(s4, fst.Arc(0, 0, w, s5))
+    f.add_arc(s4, fst.Arc(sil4, 0, w, s2))
+    f.add_arc(s4, fst.Arc(sil4, 0, w, s3))
+    f.add_arc(s4, fst.Arc(sil4, 0, w, s4))
+    f.add_arc(s4, fst.Arc(sil4, 0, w, s5))
     
-    f.add_arc(s5, fst.Arc(0, 0, weighter.get_self_loop(), s5))
+    f.add_arc(s5, fst.Arc(sil5, 0, weighter.get_self_loop(), s5))
     
     return s5
