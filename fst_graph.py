@@ -1,13 +1,101 @@
+import math
 import openfst_python as fst
 
 weight_type = 'log'
+NLL_ZERO = 1e10
 
 from subprocess import check_call
 from IPython.display import Image
 def draw_f(f):
     f.draw('tmp.dot', portrait=True)
-    check_call(['dot','-Tpng','-Gdpi=200','tmp.dot','-o','tmp.png'])
+    check_call(['dot','-Tpng','-Gdpi=600','tmp.dot','-o','tmp.png'])
     return Image(filename='tmp.png')
+
+class WeightGenerator:
+    weight_type=weight_type
+    
+    def __init__(self, weight_type='log'):
+        self.weight_type = weight_type
+    
+    def log_to_prob(self, w):
+        return math.e ** (-w)
+    def prob_to_log(self, w):
+        if w == 1:
+            return 0
+        elif w == 0:
+            return NLL_ZERO
+        return -math.log(w)
+    
+    def defloat(self, w):
+        return float(w)
+    def enfloat(self, w):
+        return fst.Weight(self.weight_type, w)
+    
+    def prob(self, w):
+        w = self.defloat(w)
+        if self.weight_type == 'log':
+            w = self.log_to_prob(w)
+        
+        return w
+    
+    def weighted(self, w):
+        if weight_type == 'tropical':
+            return w
+        
+        return self.enfloat(self.prob_to_log(w))
+    
+    def get_possible(self, f, state):
+        w = 0
+        for arc in f.arcs(state):
+            w += self.prob(float(arc.weight))
+            
+        if w >= 1:
+            return 0
+        elif w < 0:
+            return 1
+        return 1 - w
+    
+    def get_Zero(self):
+        return self.weighted(0)
+    def get_One(self):
+        return self.weighted(1)
+    
+    def get_self_loop(self):
+        return self.weighted(0.1)
+    
+    def get_split(self, f, state, N):
+        w = self.get_possible(f, state)
+        w /= N
+        return self.weighted(w)
+    
+    def get_word_entry(self, word):
+        N = len(lex)
+        return self.weighted(1/N)
+    
+    def get_word_exit(self, word):
+        return self.weighted(.5)
+weighter = WeightGenerator()
+
+def parse_lexicon(lex_file):
+    """
+    Parse the lexicon file and return it in dictionary form.
+    
+    Args:
+        lex_file (str): filename of lexicon file with structure '<word> <phone1> <phone2>...'
+                        eg. peppers p eh p er z
+
+    Returns:
+        lex (dict): dictionary mapping words to list of phones
+    """
+    
+    lex = {}  # create a dictionary for the lexicon entries
+    with open(lex_file, 'r') as f:
+        for line in f:
+            line = line.split()  # split at each space
+            lex[line[0]] = line[1:]  # first field the word, the rest is the phones
+    return lex
+
+lex = parse_lexicon('lexicon.txt')
 
 
 def generate_symbol_tables(lexicon, n=3):
@@ -126,14 +214,19 @@ def generate_word_sequence_recognition_wfst(n = 3):
     start_state = f.add_state()
     f.set_start(start_state)
     
+    silence_start = f.add_state()
+    silence_end = silence_model(f, silence_start)
+    f.add_arc(silence_end, fst.Arc(0, 0, weighter.get_split(f, silence_end, 1), start_state))
+    
     N = len(lex.keys())
     
     for word in lex.keys():
         new_start_state = f.add_state()
-        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), fst.Weight(weight_type, -math.log(1/N)), new_start_state))
+        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_entry(word), new_start_state))
         last_state = generate_word_wfst(f, new_start_state, word, n)
         f.set_final(last_state)
-        f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), fst.Weight(weight_type, -math.log(1)), start_state))
+        f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+        f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_split(f, last_state, 1), silence_start))
     
     return f
 
@@ -187,3 +280,33 @@ def create_wfst(n = 3):
     f.set_output_symbols(word_table)
 
     return f
+
+def silence_model(f, start_state):
+    s1 = start_state    
+    s2 = f.add_state()
+    s3 = f.add_state()
+    s4 = f.add_state()
+    s5 = f.add_state()
+    
+    f.add_arc(s1, fst.Arc(0, 0, weighter.get_self_loop(), s1))
+    f.add_arc(s1, fst.Arc(0, 0, weighter.get_split(f, s1, 1), s2))
+    
+    w = weighter.get_split(f, s2, 3)
+    f.add_arc(s2, fst.Arc(0, 0, w, s2))
+    f.add_arc(s2, fst.Arc(0, 0, w, s3))
+    f.add_arc(s2, fst.Arc(0, 0, w, s4))
+    
+    w = weighter.get_split(f, s3, 3)
+    f.add_arc(s3, fst.Arc(0, 0, w, s2))
+    f.add_arc(s3, fst.Arc(0, 0, w, s3))
+    f.add_arc(s3, fst.Arc(0, 0, w, s4))
+    
+    w = weighter.get_split(f, s4, 4)
+    f.add_arc(s4, fst.Arc(0, 0, w, s2))
+    f.add_arc(s4, fst.Arc(0, 0, w, s3))
+    f.add_arc(s4, fst.Arc(0, 0, w, s4))
+    f.add_arc(s4, fst.Arc(0, 0, w, s5))
+    
+    f.add_arc(s5, fst.Arc(0, 0, weighter.get_self_loop(), s5))
+    
+    return s5
