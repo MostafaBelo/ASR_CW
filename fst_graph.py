@@ -1,5 +1,6 @@
 import math
 import openfst_python as fst
+from language_model import LanguageModel
 
 weight_type = 'log'
 NLL_ZERO = 1e10
@@ -13,6 +14,7 @@ def draw_f(f):
 
 class WeightGenerator:
     weight_type=weight_type
+    lm = LanguageModel()
     
     def __init__(self, weight_type='log'):
         self.weight_type = weight_type
@@ -70,10 +72,13 @@ class WeightGenerator:
     
     def get_word_entry(self, word):
         N = len(lex)
-        return self.weighted(1/N)
+        S = 329
+        return self.weighted(self.lm.getStartWordsFrequency()[word]/S)
     
     def get_word_exit(self, word):
-        return self.weighted(.5)
+        S = 329
+        return self.weighted(1-(self.lm.getEndWordsFrequency()[word]/S))
+    
 weighter = WeightGenerator()
 
 def parse_lexicon(lex_file):
