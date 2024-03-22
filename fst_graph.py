@@ -71,13 +71,31 @@ class WeightGenerator:
         return self.weighted(w)
     
     def get_word_entry(self, word):
-        N = len(lex)
-        S = 329
-        return self.weighted(self.lm.getStartWordsFrequency()[word]/S)
+        prob = self.lm.get_start_word_prob(word)
+        res = self.weighted(self.lm.get_start_word_prob(word))
+#         print(word, prob, res)
+#         print(self.lm.start_words)
+        return self.weighted(self.lm.get_start_word_prob(word))
+    
+    def get_word_mid(self, word):
+        return self.weighted(self.lm.get_word_prob(word))
     
     def get_word_exit(self, word):
-        S = 329
-        return self.weighted(1-(self.lm.getEndWordsFrequency()[word]/S))
+        notFinal = 1-(self.lm.get_end_word_prob(word))
+        notSilence = 1-self.get_silence_split(word)
+        return self.weighted(notSilence * notFinal)
+    
+    def get_word_silence(self, word):
+        notFinal = 1-(self.lm.get_end_word_prob(word))
+        Silence = self.get_silence_split(word)
+        return self.weighted(Silence * notFinal)
+    
+    def get_silence_split(self, word):
+        return .5
+    
+    def get_word_end(self, word):
+        isFinal = self.lm.get_end_word_prob(word)
+        return self.weighted(isFinal)
     
 weighter = WeightGenerator()
 
@@ -171,18 +189,18 @@ def generate_phone_wfst(f, start_state, phone, n, word = '', isLast=False):
         in_label = state_table.find('{}_{}'.format(phone, i))
         
         next_state = f.add_state()
-        f.add_arc(current_state, fst.Arc(in_label, eps, fst.Weight(weight_type, -math.log(0.1)), current_state))
+        f.add_arc(current_state, fst.Arc(in_label, eps, weighter.get_self_loop(), current_state))
         if (isLast and i >= n):
-            f.add_arc(current_state, fst.Arc(in_label, out, fst.Weight(weight_type, -math.log(0.9)), next_state))
+            f.add_arc(current_state, fst.Arc(in_label, out, weighter.get_split(f, current_state, 1), next_state))
         else:
-            f.add_arc(current_state, fst.Arc(in_label, eps, fst.Weight(weight_type, -math.log(0.9)), next_state))
+            f.add_arc(current_state, fst.Arc(in_label, eps, weighter.get_split(f, current_state, 1), next_state))
         
         current_state = next_state
     
     return current_state
 
 
-def generate_word_wfst(f, start_state, word, n):
+def generate_word_wfst(f, start_state, word, n, phone_list=None):
     """ Generate a WFST for any word in the lexicon, composed of n-state phone WFSTs.
         This will currently output phone labels.  
     
@@ -198,14 +216,24 @@ def generate_word_wfst(f, start_state, word, n):
     """
 
     current_state = start_state
-    phone_list = lex[word]
+    phone_list = lex[word] if phone_list == None else phone_list
     for phone in phone_list[:-1]:
         current_state = generate_phone_wfst(f, current_state, phone, n)
     current_state = generate_phone_wfst(f, current_state, phone_list[-1], n, word, True)
+    
     f.set_final(current_state)
     
     return current_state
 
+def add_word(f, n, init_state, start_state, silence_start, silence_end, word, phone_list=None):
+    new_start_state = f.add_state()
+    f.add_arc(init_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_entry(word), new_start_state))
+    f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), new_start_state))
+    last_state = generate_word_wfst(f, new_start_state, word, n, phone_list)
+    prob_final = weighter.get_word_end(word)
+    f.set_final(last_state, prob_final)
+    f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+    f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
 
 def generate_word_sequence_recognition_wfst(n = 3):
     """ generate a HMM to recognise any sequence of words in the lexicon
@@ -220,9 +248,11 @@ def generate_word_sequence_recognition_wfst(n = 3):
     
     f = fst.Fst(weight_type)
     
+    init_state = f.add_state()
+    f.set_start(init_state)
+    
     # create a single start state
     start_state = f.add_state()
-    f.set_start(start_state)
     
     silence_start = f.add_state()
     silence_end = silence_model(f, silence_start)
@@ -232,12 +262,18 @@ def generate_word_sequence_recognition_wfst(n = 3):
     N = len(lex.keys())
     
     for word in lex.keys():
-        new_start_state = f.add_state()
-        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_entry(word), new_start_state))
-        last_state = generate_word_wfst(f, new_start_state, word, n)
-        f.set_final(last_state)
-        f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
-        f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_split(f, last_state, 1), silence_start))
+        add_word(f, n, init_state, start_state, silence_start, silence_end, word, None)
+#         new_start_state = f.add_state()
+#         f.add_arc(init_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_entry(word), new_start_state))
+#         f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), new_start_state))
+#         last_state = generate_word_wfst(f, new_start_state, word, n)
+#         f.set_final(last_state)
+#         f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+#         f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
+        
+    
+    add_word(f, n, init_state, start_state, silence_start, silence_end, "a", ["ah"])
+    add_word(f, n, init_state, start_state, silence_start, silence_end, "the", ["dh", "ah"])
     
     return f
 
