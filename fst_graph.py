@@ -1,6 +1,7 @@
 import math
 import openfst_python as fst
 from language_model import LanguageModel
+from minimizations import *
 
 weight_type = 'log'
 NLL_ZERO = 1e10
@@ -71,10 +72,6 @@ class WeightGenerator:
         return self.weighted(w)
     
     def get_word_entry(self, word):
-        prob = self.lm.get_start_word_prob(word)
-        res = self.weighted(self.lm.get_start_word_prob(word))
-#         print(word, prob, res)
-#         print(self.lm.start_words)
         return self.weighted(self.lm.get_start_word_prob(word))
     
     def get_word_mid(self, word):
@@ -96,6 +93,16 @@ class WeightGenerator:
     def get_word_end(self, word):
         isFinal = self.lm.get_end_word_prob(word)
         return self.weighted(isFinal)
+    
+    def get_word_entry_in_subset(self, word, words):
+        prob1 = self.lm.get_start_word_freq(word)
+        prob2 = self.lm.get_start_word_freq(words)
+        return self.weighted(prob1 / prob2)
+    
+    def get_word_mid_in_subset(self, word, words):
+        prob1 = self.lm.get_word_freq(word)
+        prob2 = self.lm.get_word_freq(words)
+        return self.weighted(prob1 / prob2)
     
 weighter = WeightGenerator()
 
@@ -228,13 +235,74 @@ def generate_word_wfst(f, start_state, word, n, phone_list=None):
 def add_word(f, n, init_state, start_state, silence_start, silence_end, word, phone_list=None):
     new_start_state = f.add_state()
     f.add_arc(init_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_entry(word), new_start_state))
+    
     f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), new_start_state))
+    
     last_state = generate_word_wfst(f, new_start_state, word, n, phone_list)
     prob_final = weighter.get_word_end(word)
     f.set_final(last_state, prob_final)
+    
     f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
     f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
+    
+def generate_from_node(f, node, start_state, silence_start, phone_start, n):    
+    if node.data == "root":
+        return
+    elif node.data == "eps":
+        word = node.out_lbl
+        f.add_arc(phone_start, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+        f.set_final(phone_start, weighter.get_word_end(word))
+        return
+    
+    phone = node.data
+    phone_word = node.getLastWord()
+    isLast = node.isLast()
+    last_state = generate_phone_wfst(f, phone_start, phone, n, phone_word, isLast)
+    
+    if node.is_branching():
+        for child in node.children:
+            word = child.words_below
+            words = node.words_below
+            
+            child_transition = f.add_state()
+            out_lbl = phone_table.find("<eps>")
+            if child.data == "eps":
+                out_lbl = word_table.find(child.out_lbl)
+            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), out_lbl, weighter.get_word_mid_in_subset(word, words), child_transition))
+            
+            generate_from_node(f, child, start_state, silence_start, child_transition, n)
+    else:
+        if node.out_lbl != "":
+            word = node.out_lbl
+            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
+            f.set_final(last_state, weighter.get_word_end(word))
+        
+        for child in node.children:
+            generate_from_node(f, child, start_state, silence_start, last_state, n)
 
+def generate_recog_from_tree(n = 3):
+    root = tree_root
+    
+    f = fst.Fst(weight_type)
+    
+    # create a single start state
+    start_state = f.add_state()
+    f.set_start(start_state)
+    
+    silence_start = f.add_state()
+    silence_end = silence_model(f, silence_start)
+    sil_symbol = state_table.find("sil_5")
+    f.add_arc(silence_end, fst.Arc(sil_symbol, 0, weighter.get_split(f, silence_end, 1), start_state))
+    
+    for child in root.children:
+        word_start = f.add_state()
+        word = child.words_below
+        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), word_start))
+        generate_from_node(f, child, start_state, silence_start, word_start, n)
+        
+    return f
+    
 def generate_word_sequence_recognition_wfst(n = 3):
     """ generate a HMM to recognise any sequence of words in the lexicon
     
@@ -322,7 +390,8 @@ def generate_L_wfst(lex):
 
 
 def create_wfst(n = 3):
-    f = generate_word_sequence_recognition_wfst(n)
+#     f = generate_word_sequence_recognition_wfst(n)
+    f = generate_recog_from_tree(n)
     f.set_input_symbols(state_table)
     f.set_output_symbols(word_table)
 

@@ -57,9 +57,16 @@ class LanguageModel:
         return self.words
     
     def get_start_word_freq(self, word):
-        if word in self.start_words:
-            return self.start_words[word]
-        return 0
+        if isinstance(word, list):
+            freq = 0
+            for w in word:
+                if w in self.start_words:
+                    freq += self.start_words[w]
+            return freq
+        else:
+            if word in self.start_words:
+                return self.start_words[word]
+            return 0
     
     def get_end_word_freq(self, word):
         if word in self.end_words:
@@ -67,9 +74,16 @@ class LanguageModel:
         return 0
     
     def get_word_freq(self, word):
-        if word in self.words:
-            return self.words[word]
-        return 0
+        if isinstance(word, list):
+            freq = 0
+            for w in word:
+                if w in self.words:
+                    freq += self.words[w]
+            return freq
+        else:
+            if word in self.words:
+                return self.words[word]
+            return 0
     
     def get_start_word_prob(self, word):
         return self.get_start_word_freq(word) / self.start_words_count
