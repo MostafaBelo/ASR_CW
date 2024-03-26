@@ -68,7 +68,7 @@ class Node:
         self.words_below.append(word)
         
     def isLast(self):
-        return len(self.words_below) <= 1
+        return len(self.words_below) <= 1 and self.out_lbl != ""
     def getLastWord(self):
         if self.out_lbl != "":
             return self.out_lbl

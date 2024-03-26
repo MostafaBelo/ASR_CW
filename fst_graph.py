@@ -19,6 +19,10 @@ class WeightGenerator:
     
     def __init__(self, weight_type='log'):
         self.weight_type = weight_type
+        
+        self.ext_power = 4
+        self.self_loop_prob = 0.7
+        self.phone_prob = 30
     
     def log_to_prob(self, w):
         return math.e ** (-w)
@@ -41,11 +45,14 @@ class WeightGenerator:
         
         return w
     
-    def weighted(self, w):
+    def weighted(self, w, isExternel=False):        
         if weight_type == 'tropical':
             return w
         
-        return self.enfloat(self.prob_to_log(w))
+        w = self.prob_to_log(w)
+        if isExternel:
+            w = w**self.ext_power
+        return self.enfloat(w)
     
     def get_possible(self, f, state):
         w = 0
@@ -64,7 +71,15 @@ class WeightGenerator:
         return self.weighted(1)
     
     def get_self_loop(self):
-        return self.weighted(0.1)
+        return self.weighted(self.self_loop_prob)
+#         word_weight = 1
+# #         word_weight = self.lm.get_word_weight(word)
+#         return self.self_loop_prob * (self.phone_prob / phone_count) * word_weight
+    
+    def get_forward_traversal(self, word, phone_count):
+        word_weight = 1
+#         word_weight = self.lm.get_word_weight(word)
+        return (1-self.self_loop_prob) * (self.phone_prob / phone_count) * word_weight
     
     def get_split(self, f, state, N):
         w = self.get_possible(f, state)
@@ -72,37 +87,37 @@ class WeightGenerator:
         return self.weighted(w)
     
     def get_word_entry(self, word):
-        return self.weighted(self.lm.get_start_word_prob(word))
+        return self.weighted(self.lm.get_start_word_prob(word), True)
     
     def get_word_mid(self, word):
-        return self.weighted(self.lm.get_word_prob(word))
+        return self.weighted(self.lm.get_word_prob(word), True)
     
     def get_word_exit(self, word):
         notFinal = 1-(self.lm.get_end_word_prob(word))
         notSilence = 1-self.get_silence_split(word)
-        return self.weighted(notSilence * notFinal)
+        return self.weighted(notSilence * notFinal, True)
     
     def get_word_silence(self, word):
         notFinal = 1-(self.lm.get_end_word_prob(word))
         Silence = self.get_silence_split(word)
-        return self.weighted(Silence * notFinal)
+        return self.weighted(Silence * notFinal, True)
     
     def get_silence_split(self, word):
         return .5
     
     def get_word_end(self, word):
         isFinal = self.lm.get_end_word_prob(word)
-        return self.weighted(isFinal)
+        return self.weighted(isFinal, True)
     
     def get_word_entry_in_subset(self, word, words):
         prob1 = self.lm.get_start_word_freq(word)
         prob2 = self.lm.get_start_word_freq(words)
-        return self.weighted(prob1 / prob2)
+        return self.weighted(prob1 / prob2, True)
     
     def get_word_mid_in_subset(self, word, words):
         prob1 = self.lm.get_word_freq(word)
         prob2 = self.lm.get_word_freq(words)
-        return self.weighted(prob1 / prob2)
+        return self.weighted(prob1 / prob2, True)
     
 weighter = WeightGenerator()
 

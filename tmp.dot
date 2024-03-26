@@ -6,11 +6,11 @@ orientation = Portrait;
 ranksep = "0.4";
 nodesep = "0.25";
 0 [label = "0", shape = circle, style = bold, fontsize = 14]
-	0 -> 6 [label = "<eps>:<eps>/1.8417", fontsize = 14];
-	0 -> 15 [label = "<eps>:<eps>/2.8651", fontsize = 14];
-	0 -> 19 [label = "<eps>:<eps>/0.3063", fontsize = 14];
-	0 -> 82 [label = "<eps>:<eps>/2.1792", fontsize = 14];
-	0 -> 94 [label = "<eps>:<eps>/3.0217", fontsize = 14];
+	0 -> 6 [label = "<eps>:<eps>/6.2469", fontsize = 14];
+	0 -> 15 [label = "<eps>:<eps>/23.519", fontsize = 14];
+	0 -> 19 [label = "<eps>:<eps>/0.028736", fontsize = 14];
+	0 -> 82 [label = "<eps>:<eps>/10.349", fontsize = 14];
+	0 -> 94 [label = "<eps>:<eps>/27.589", fontsize = 14];
 1 [label = "1", shape = circle, style = solid, fontsize = 14]
 	1 -> 1 [label = "sil_1:<eps>/2.3026", fontsize = 14];
 	1 -> 2 [label = "sil_1:<eps>/0.10536", fontsize = 14];
@@ -40,10 +40,10 @@ nodesep = "0.25";
 	8 -> 8 [label = "ah_3:<eps>/2.3026", fontsize = 14];
 	8 -> 9 [label = "ah_3:<eps>/0.10536", fontsize = 14];
 9 [label = "9", shape = circle, style = solid, fontsize = 14]
-	9 -> 10 [label = "<eps>:a/1.0234", fontsize = 14];
-	9 -> 11 [label = "<eps>:<eps>/0.44531", fontsize = 14];
-10 [label = "10/1e+10", shape = doublecircle, style = solid, fontsize = 14]
-	10 -> 0 [label = "<eps>:<eps>/0.69315", fontsize = 14];
+	9 -> 10 [label = "<eps>:a/1.0718", fontsize = 14];
+	9 -> 11 [label = "<eps>:<eps>/0.088306", fontsize = 14];
+10 [label = "10/1e+30", shape = doublecircle, style = solid, fontsize = 14]
+	10 -> 0 [label = "<eps>:<eps>/0.33302", fontsize = 14];
 11 [label = "11", shape = circle, style = solid, fontsize = 14]
 	11 -> 11 [label = "v_1:<eps>/2.3026", fontsize = 14];
 	11 -> 12 [label = "v_1:<eps>/0.10536", fontsize = 14];
@@ -53,9 +53,9 @@ nodesep = "0.25";
 13 [label = "13", shape = circle, style = solid, fontsize = 14]
 	13 -> 13 [label = "v_3:<eps>/2.3026", fontsize = 14];
 	13 -> 14 [label = "v_3:of/0.10536", fontsize = 14];
-14 [label = "14/4.1866", shape = doublecircle, style = solid, fontsize = 14]
-	14 -> 0 [label = "<eps>:<eps>/0.70846", fontsize = 14];
-	14 -> 1 [label = "<eps>:<eps>/0.70846", fontsize = 14];
+14 [label = "14/73.382", shape = doublecircle, style = solid, fontsize = 14]
+	14 -> 0 [label = "<eps>:<eps>/0.35559", fontsize = 14];
+	14 -> 1 [label = "<eps>:<eps>/0.35559", fontsize = 14];
 15 [label = "15", shape = circle, style = solid, fontsize = 14]
 	15 -> 15 [label = "ey_1:<eps>/2.3026", fontsize = 14];
 	15 -> 16 [label = "ey_1:<eps>/0.10536", fontsize = 14];
@@ -65,9 +65,9 @@ nodesep = "0.25";
 17 [label = "17", shape = circle, style = solid, fontsize = 14]
 	17 -> 17 [label = "ey_3:<eps>/2.3026", fontsize = 14];
 	17 -> 18 [label = "ey_3:a/0.10536", fontsize = 14];
-18 [label = "18/1e+10", shape = doublecircle, style = solid, fontsize = 14]
-	18 -> 0 [label = "<eps>:<eps>/0.69315", fontsize = 14];
-	18 -> 1 [label = "<eps>:<eps>/0.69315", fontsize = 14];
+18 [label = "18/1e+30", shape = doublecircle, style = solid, fontsize = 14]
+	18 -> 0 [label = "<eps>:<eps>/0.33302", fontsize = 14];
+	18 -> 1 [label = "<eps>:<eps>/0.33302", fontsize = 14];
 19 [label = "19", shape = circle, style = solid, fontsize = 14]
 	19 -> 19 [label = "p_1:<eps>/2.3026", fontsize = 14];
 	19 -> 20 [label = "p_1:<eps>/0.10536", fontsize = 14];
@@ -78,10 +78,10 @@ nodesep = "0.25";
 	21 -> 21 [label = "p_3:<eps>/2.3026", fontsize = 14];
 	21 -> 22 [label = "p_3:<eps>/0.10536", fontsize = 14];
 22 [label = "22", shape = circle, style = solid, fontsize = 14]
-	22 -> 23 [label = "<eps>:<eps>/1.1144", fontsize = 14];
-	22 -> 41 [label = "<eps>:<eps>/1.663", fontsize = 14];
-	22 -> 51 [label = "<eps>:<eps>/1.1387", fontsize = 14];
-	22 -> 72 [label = "<eps>:<eps>/1.8196", fontsize = 14];
+	22 -> 23 [label = "<eps>:<eps>/1.3841", fontsize = 14];
+	22 -> 41 [label = "<eps>:<eps>/4.5992", fontsize = 14];
+	22 -> 51 [label = "<eps>:<eps>/1.4763", fontsize = 14];
+	22 -> 72 [label = "<eps>:<eps>/6.0249", fontsize = 14];
 23 [label = "23", shape = circle, style = solid, fontsize = 14]
 	23 -> 23 [label = "eh_1:<eps>/2.3026", fontsize = 14];
 	23 -> 24 [label = "eh_1:<eps>/0.10536", fontsize = 14];
@@ -92,8 +92,8 @@ nodesep = "0.25";
 	25 -> 25 [label = "eh_3:<eps>/2.3026", fontsize = 14];
 	25 -> 26 [label = "eh_3:<eps>/0.10536", fontsize = 14];
 26 [label = "26", shape = circle, style = solid, fontsize = 14]
-	26 -> 27 [label = "<eps>:<eps>/0.79566", fontsize = 14];
-	26 -> 31 [label = "<eps>:<eps>/0.60017", fontsize = 14];
+	26 -> 27 [label = "<eps>:<eps>/0.50372", fontsize = 14];
+	26 -> 31 [label = "<eps>:<eps>/0.21618", fontsize = 14];
 27 [label = "27", shape = circle, style = solid, fontsize = 14]
 	27 -> 27 [label = "k_1:<eps>/2.3026", fontsize = 14];
 	27 -> 28 [label = "k_1:<eps>/0.10536", fontsize = 14];
@@ -103,9 +103,9 @@ nodesep = "0.25";
 29 [label = "29", shape = circle, style = solid, fontsize = 14]
 	29 -> 29 [label = "k_3:<eps>/2.3026", fontsize = 14];
 	29 -> 30 [label = "k_3:peck/0.10536", fontsize = 14];
-30 [label = "30/2.7515", shape = doublecircle, style = solid, fontsize = 14]
-	30 -> 0 [label = "<eps>:<eps>/0.75911", fontsize = 14];
-	30 -> 1 [label = "<eps>:<eps>/0.75911", fontsize = 14];
+30 [label = "30/20.832", shape = doublecircle, style = solid, fontsize = 14]
+	30 -> 0 [label = "<eps>:<eps>/0.43743", fontsize = 14];
+	30 -> 1 [label = "<eps>:<eps>/0.43743", fontsize = 14];
 31 [label = "31", shape = circle, style = solid, fontsize = 14]
 	31 -> 31 [label = "p_1:<eps>/2.3026", fontsize = 14];
 	31 -> 32 [label = "p_1:<eps>/0.10536", fontsize = 14];
@@ -114,7 +114,7 @@ nodesep = "0.25";
 	32 -> 33 [label = "p_2:<eps>/0.10536", fontsize = 14];
 33 [label = "33", shape = circle, style = solid, fontsize = 14]
 	33 -> 33 [label = "p_3:<eps>/2.3026", fontsize = 14];
-	33 -> 34 [label = "p_3:peppers/0.10536", fontsize = 14];
+	33 -> 34 [label = "p_3:<eps>/0.10536", fontsize = 14];
 34 [label = "34", shape = circle, style = solid, fontsize = 14]
 	34 -> 34 [label = "er_1:<eps>/2.3026", fontsize = 14];
 	34 -> 35 [label = "er_1:<eps>/0.10536", fontsize = 14];
@@ -123,7 +123,7 @@ nodesep = "0.25";
 	35 -> 36 [label = "er_2:<eps>/0.10536", fontsize = 14];
 36 [label = "36", shape = circle, style = solid, fontsize = 14]
 	36 -> 36 [label = "er_3:<eps>/2.3026", fontsize = 14];
-	36 -> 37 [label = "er_3:peppers/0.10536", fontsize = 14];
+	36 -> 37 [label = "er_3:<eps>/0.10536", fontsize = 14];
 37 [label = "37", shape = circle, style = solid, fontsize = 14]
 	37 -> 37 [label = "z_1:<eps>/2.3026", fontsize = 14];
 	37 -> 38 [label = "z_1:<eps>/0.10536", fontsize = 14];
@@ -133,9 +133,9 @@ nodesep = "0.25";
 39 [label = "39", shape = circle, style = solid, fontsize = 14]
 	39 -> 39 [label = "z_3:<eps>/2.3026", fontsize = 14];
 	39 -> 40 [label = "z_3:peppers/0.10536", fontsize = 14];
-40 [label = "40/1.0169", shape = doublecircle, style = solid, fontsize = 14]
-	40 -> 0 [label = "<eps>:<eps>/1.1421", fontsize = 14];
-	40 -> 1 [label = "<eps>:<eps>/1.1421", fontsize = 14];
+40 [label = "40/1.0517", shape = doublecircle, style = solid, fontsize = 14]
+	40 -> 0 [label = "<eps>:<eps>/1.4897", fontsize = 14];
+	40 -> 1 [label = "<eps>:<eps>/1.4897", fontsize = 14];
 41 [label = "41", shape = circle, style = solid, fontsize = 14]
 	41 -> 41 [label = "iy_1:<eps>/2.3026", fontsize = 14];
 	41 -> 42 [label = "iy_1:<eps>/0.10536", fontsize = 14];
@@ -144,7 +144,7 @@ nodesep = "0.25";
 	42 -> 43 [label = "iy_2:<eps>/0.10536", fontsize = 14];
 43 [label = "43", shape = circle, style = solid, fontsize = 14]
 	43 -> 43 [label = "iy_3:<eps>/2.3026", fontsize = 14];
-	43 -> 44 [label = "iy_3:peter/0.10536", fontsize = 14];
+	43 -> 44 [label = "iy_3:<eps>/0.10536", fontsize = 14];
 44 [label = "44", shape = circle, style = solid, fontsize = 14]
 	44 -> 44 [label = "t_1:<eps>/2.3026", fontsize = 14];
 	44 -> 45 [label = "t_1:<eps>/0.10536", fontsize = 14];
@@ -153,7 +153,7 @@ nodesep = "0.25";
 	45 -> 46 [label = "t_2:<eps>/0.10536", fontsize = 14];
 46 [label = "46", shape = circle, style = solid, fontsize = 14]
 	46 -> 46 [label = "t_3:<eps>/2.3026", fontsize = 14];
-	46 -> 47 [label = "t_3:peter/0.10536", fontsize = 14];
+	46 -> 47 [label = "t_3:<eps>/0.10536", fontsize = 14];
 47 [label = "47", shape = circle, style = solid, fontsize = 14]
 	47 -> 47 [label = "er_1:<eps>/2.3026", fontsize = 14];
 	47 -> 48 [label = "er_1:<eps>/0.10536", fontsize = 14];
@@ -163,9 +163,9 @@ nodesep = "0.25";
 49 [label = "49", shape = circle, style = solid, fontsize = 14]
 	49 -> 49 [label = "er_3:<eps>/2.3026", fontsize = 14];
 	49 -> 50 [label = "er_3:peter/0.10536", fontsize = 14];
-50 [label = "50/2.4639", shape = doublecircle, style = solid, fontsize = 14]
-	50 -> 0 [label = "<eps>:<eps>/0.78209", fontsize = 14];
-	50 -> 1 [label = "<eps>:<eps>/0.78209", fontsize = 14];
+50 [label = "50/14.957", shape = doublecircle, style = solid, fontsize = 14]
+	50 -> 0 [label = "<eps>:<eps>/0.47839", fontsize = 14];
+	50 -> 1 [label = "<eps>:<eps>/0.47839", fontsize = 14];
 51 [label = "51", shape = circle, style = solid, fontsize = 14]
 	51 -> 51 [label = "ih_1:<eps>/2.3026", fontsize = 14];
 	51 -> 52 [label = "ih_1:<eps>/0.10536", fontsize = 14];
@@ -185,8 +185,8 @@ nodesep = "0.25";
 	56 -> 56 [label = "k_3:<eps>/2.3026", fontsize = 14];
 	56 -> 57 [label = "k_3:<eps>/0.10536", fontsize = 14];
 57 [label = "57", shape = circle, style = solid, fontsize = 14]
-	57 -> 58 [label = "<eps>:<eps>/0.6914", fontsize = 14];
-	57 -> 62 [label = "<eps>:<eps>/0.6949", fontsize = 14];
+	57 -> 58 [label = "<eps>:<eps>/0.33051", fontsize = 14];
+	57 -> 62 [label = "<eps>:<eps>/0.33556", fontsize = 14];
 58 [label = "58", shape = circle, style = solid, fontsize = 14]
 	58 -> 58 [label = "t_1:<eps>/2.3026", fontsize = 14];
 	58 -> 59 [label = "t_1:<eps>/0.10536", fontsize = 14];
@@ -196,9 +196,9 @@ nodesep = "0.25";
 60 [label = "60", shape = circle, style = solid, fontsize = 14]
 	60 -> 60 [label = "t_3:<eps>/2.3026", fontsize = 14];
 	60 -> 61 [label = "t_3:picked/0.10536", fontsize = 14];
-61 [label = "61/1.2111", shape = doublecircle, style = solid, fontsize = 14]
-	61 -> 0 [label = "<eps>:<eps>/1.0468", fontsize = 14];
-	61 -> 1 [label = "<eps>:<eps>/1.0468", fontsize = 14];
+61 [label = "61/1.7764", shape = doublecircle, style = solid, fontsize = 14]
+	61 -> 0 [label = "<eps>:<eps>/1.147", fontsize = 14];
+	61 -> 1 [label = "<eps>:<eps>/1.147", fontsize = 14];
 62 [label = "62", shape = circle, style = solid, fontsize = 14]
 	62 -> 62 [label = "ah_1:<eps>/2.3026", fontsize = 14];
 	62 -> 63 [label = "ah_1:<eps>/0.10536", fontsize = 14];
@@ -207,7 +207,7 @@ nodesep = "0.25";
 	63 -> 64 [label = "ah_2:<eps>/0.10536", fontsize = 14];
 64 [label = "64", shape = circle, style = solid, fontsize = 14]
 	64 -> 64 [label = "ah_3:<eps>/2.3026", fontsize = 14];
-	64 -> 65 [label = "ah_3:pickled/0.10536", fontsize = 14];
+	64 -> 65 [label = "ah_3:<eps>/0.10536", fontsize = 14];
 65 [label = "65", shape = circle, style = solid, fontsize = 14]
 	65 -> 65 [label = "l_1:<eps>/2.3026", fontsize = 14];
 	65 -> 66 [label = "l_1:<eps>/0.10536", fontsize = 14];
@@ -216,7 +216,7 @@ nodesep = "0.25";
 	66 -> 67 [label = "l_2:<eps>/0.10536", fontsize = 14];
 67 [label = "67", shape = circle, style = solid, fontsize = 14]
 	67 -> 67 [label = "l_3:<eps>/2.3026", fontsize = 14];
-	67 -> 68 [label = "l_3:pickled/0.10536", fontsize = 14];
+	67 -> 68 [label = "l_3:<eps>/0.10536", fontsize = 14];
 68 [label = "68", shape = circle, style = solid, fontsize = 14]
 	68 -> 68 [label = "d_1:<eps>/2.3026", fontsize = 14];
 	68 -> 69 [label = "d_1:<eps>/0.10536", fontsize = 14];
@@ -226,9 +226,9 @@ nodesep = "0.25";
 70 [label = "70", shape = circle, style = solid, fontsize = 14]
 	70 -> 70 [label = "d_3:<eps>/2.3026", fontsize = 14];
 	70 -> 71 [label = "d_3:pickled/0.10536", fontsize = 14];
-71 [label = "71/2.8516", shape = doublecircle, style = solid, fontsize = 14]
-	71 -> 0 [label = "<eps>:<eps>/0.75263", fontsize = 14];
-	71 -> 1 [label = "<eps>:<eps>/0.75263", fontsize = 14];
+71 [label = "71/23.189", shape = doublecircle, style = solid, fontsize = 14]
+	71 -> 0 [label = "<eps>:<eps>/0.42633", fontsize = 14];
+	71 -> 1 [label = "<eps>:<eps>/0.42633", fontsize = 14];
 72 [label = "72", shape = circle, style = solid, fontsize = 14]
 	72 -> 72 [label = "ay_1:<eps>/2.3026", fontsize = 14];
 	72 -> 73 [label = "ay_1:<eps>/0.10536", fontsize = 14];
@@ -237,7 +237,7 @@ nodesep = "0.25";
 	73 -> 74 [label = "ay_2:<eps>/0.10536", fontsize = 14];
 74 [label = "74", shape = circle, style = solid, fontsize = 14]
 	74 -> 74 [label = "ay_3:<eps>/2.3026", fontsize = 14];
-	74 -> 75 [label = "ay_3:piper/0.10536", fontsize = 14];
+	74 -> 75 [label = "ay_3:<eps>/0.10536", fontsize = 14];
 75 [label = "75", shape = circle, style = solid, fontsize = 14]
 	75 -> 75 [label = "p_1:<eps>/2.3026", fontsize = 14];
 	75 -> 76 [label = "p_1:<eps>/0.10536", fontsize = 14];
@@ -246,7 +246,7 @@ nodesep = "0.25";
 	76 -> 77 [label = "p_2:<eps>/0.10536", fontsize = 14];
 77 [label = "77", shape = circle, style = solid, fontsize = 14]
 	77 -> 77 [label = "p_3:<eps>/2.3026", fontsize = 14];
-	77 -> 78 [label = "p_3:piper/0.10536", fontsize = 14];
+	77 -> 78 [label = "p_3:<eps>/0.10536", fontsize = 14];
 78 [label = "78", shape = circle, style = solid, fontsize = 14]
 	78 -> 78 [label = "er_1:<eps>/2.3026", fontsize = 14];
 	78 -> 79 [label = "er_1:<eps>/0.10536", fontsize = 14];
@@ -256,9 +256,9 @@ nodesep = "0.25";
 80 [label = "80", shape = circle, style = solid, fontsize = 14]
 	80 -> 80 [label = "er_3:<eps>/2.3026", fontsize = 14];
 	80 -> 81 [label = "er_3:piper/0.10536", fontsize = 14];
-81 [label = "81/2.1851", shape = doublecircle, style = solid, fontsize = 14]
-	81 -> 0 [label = "<eps>:<eps>/0.81245", fontsize = 14];
-	81 -> 1 [label = "<eps>:<eps>/0.81245", fontsize = 14];
+81 [label = "81/10.434", shape = doublecircle, style = solid, fontsize = 14]
+	81 -> 0 [label = "<eps>:<eps>/0.53628", fontsize = 14];
+	81 -> 1 [label = "<eps>:<eps>/0.53628", fontsize = 14];
 82 [label = "82", shape = circle, style = solid, fontsize = 14]
 	82 -> 82 [label = "dh_1:<eps>/2.3026", fontsize = 14];
 	82 -> 83 [label = "dh_1:<eps>/0.10536", fontsize = 14];
@@ -269,8 +269,8 @@ nodesep = "0.25";
 	84 -> 84 [label = "dh_3:<eps>/2.3026", fontsize = 14];
 	84 -> 85 [label = "dh_3:<eps>/0.10536", fontsize = 14];
 85 [label = "85", shape = circle, style = solid, fontsize = 14]
-	85 -> 86 [label = "<eps>:<eps>/0.69315", fontsize = 14];
-	85 -> 90 [label = "<eps>:<eps>/0.69315", fontsize = 14];
+	85 -> 86 [label = "<eps>:<eps>/0.33302", fontsize = 14];
+	85 -> 90 [label = "<eps>:<eps>/0.33302", fontsize = 14];
 86 [label = "86", shape = circle, style = solid, fontsize = 14]
 	86 -> 86 [label = "ah_1:<eps>/2.3026", fontsize = 14];
 	86 -> 87 [label = "ah_1:<eps>/0.10536", fontsize = 14];
@@ -280,9 +280,9 @@ nodesep = "0.25";
 88 [label = "88", shape = circle, style = solid, fontsize = 14]
 	88 -> 88 [label = "ah_3:<eps>/2.3026", fontsize = 14];
 	88 -> 89 [label = "ah_3:the/0.10536", fontsize = 14];
-89 [label = "89/1e+10", shape = doublecircle, style = solid, fontsize = 14]
-	89 -> 0 [label = "<eps>:<eps>/0.69315", fontsize = 14];
-	89 -> 1 [label = "<eps>:<eps>/0.69315", fontsize = 14];
+89 [label = "89/1e+30", shape = doublecircle, style = solid, fontsize = 14]
+	89 -> 0 [label = "<eps>:<eps>/0.33302", fontsize = 14];
+	89 -> 1 [label = "<eps>:<eps>/0.33302", fontsize = 14];
 90 [label = "90", shape = circle, style = solid, fontsize = 14]
 	90 -> 90 [label = "iy_1:<eps>/2.3026", fontsize = 14];
 	90 -> 91 [label = "iy_1:<eps>/0.10536", fontsize = 14];
@@ -292,9 +292,9 @@ nodesep = "0.25";
 92 [label = "92", shape = circle, style = solid, fontsize = 14]
 	92 -> 92 [label = "iy_3:<eps>/2.3026", fontsize = 14];
 	92 -> 93 [label = "iy_3:the/0.10536", fontsize = 14];
-93 [label = "93/1e+10", shape = doublecircle, style = solid, fontsize = 14]
-	93 -> 0 [label = "<eps>:<eps>/0.69315", fontsize = 14];
-	93 -> 1 [label = "<eps>:<eps>/0.69315", fontsize = 14];
+93 [label = "93/1e+30", shape = doublecircle, style = solid, fontsize = 14]
+	93 -> 0 [label = "<eps>:<eps>/0.33302", fontsize = 14];
+	93 -> 1 [label = "<eps>:<eps>/0.33302", fontsize = 14];
 94 [label = "94", shape = circle, style = solid, fontsize = 14]
 	94 -> 94 [label = "w_1:<eps>/2.3026", fontsize = 14];
 	94 -> 95 [label = "w_1:<eps>/0.10536", fontsize = 14];
@@ -303,7 +303,7 @@ nodesep = "0.25";
 	95 -> 96 [label = "w_2:<eps>/0.10536", fontsize = 14];
 96 [label = "96", shape = circle, style = solid, fontsize = 14]
 	96 -> 96 [label = "w_3:<eps>/2.3026", fontsize = 14];
-	96 -> 97 [label = "w_3:where's/0.10536", fontsize = 14];
+	96 -> 97 [label = "w_3:<eps>/0.10536", fontsize = 14];
 97 [label = "97", shape = circle, style = solid, fontsize = 14]
 	97 -> 97 [label = "eh_1:<eps>/2.3026", fontsize = 14];
 	97 -> 98 [label = "eh_1:<eps>/0.10536", fontsize = 14];
@@ -312,7 +312,7 @@ nodesep = "0.25";
 	98 -> 99 [label = "eh_2:<eps>/0.10536", fontsize = 14];
 99 [label = "99", shape = circle, style = solid, fontsize = 14]
 	99 -> 99 [label = "eh_3:<eps>/2.3026", fontsize = 14];
-	99 -> 100 [label = "eh_3:where's/0.10536", fontsize = 14];
+	99 -> 100 [label = "eh_3:<eps>/0.10536", fontsize = 14];
 100 [label = "100", shape = circle, style = solid, fontsize = 14]
 	100 -> 100 [label = "r_1:<eps>/2.3026", fontsize = 14];
 	100 -> 101 [label = "r_1:<eps>/0.10536", fontsize = 14];
@@ -321,7 +321,7 @@ nodesep = "0.25";
 	101 -> 102 [label = "r_2:<eps>/0.10536", fontsize = 14];
 102 [label = "102", shape = circle, style = solid, fontsize = 14]
 	102 -> 102 [label = "r_3:<eps>/2.3026", fontsize = 14];
-	102 -> 103 [label = "r_3:where's/0.10536", fontsize = 14];
+	102 -> 103 [label = "r_3:<eps>/0.10536", fontsize = 14];
 103 [label = "103", shape = circle, style = solid, fontsize = 14]
 	103 -> 103 [label = "z_1:<eps>/2.3026", fontsize = 14];
 	103 -> 104 [label = "z_1:<eps>/0.10536", fontsize = 14];
@@ -331,7 +331,7 @@ nodesep = "0.25";
 105 [label = "105", shape = circle, style = solid, fontsize = 14]
 	105 -> 105 [label = "z_3:<eps>/2.3026", fontsize = 14];
 	105 -> 106 [label = "z_3:where's/0.10536", fontsize = 14];
-106 [label = "106/5.1029", shape = doublecircle, style = solid, fontsize = 14]
-	106 -> 0 [label = "<eps>:<eps>/0.69924", fontsize = 14];
-	106 -> 1 [label = "<eps>:<eps>/0.69924", fontsize = 14];
+106 [label = "106/132.88", shape = doublecircle, style = solid, fontsize = 14]
+	106 -> 0 [label = "<eps>:<eps>/0.34189", fontsize = 14];
+	106 -> 1 [label = "<eps>:<eps>/0.34189", fontsize = 14];
 }

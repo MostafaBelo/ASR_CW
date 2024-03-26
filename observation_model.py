@@ -43,18 +43,21 @@ def nn_check_for_errors(nnet, debug=False):
     err = [x for x in stdout if x.startswith('WARNING') or x.startswith('ERR')]
     raise Exception('\n'.join(err))
 
-
-nnet = initialize_nn()
-loaded_first_rec = False
+def get_nnet():
+    nnet = initialize_nn()    
+    return nnet
+# nnet = initialize_nn()
+# loaded_first_rec = False
 
 class ObservationModel:
-    def __init__(self, debug=False, kaldi_dir=None):
+    def __init__(self, nnet, loaded_first_rec, debug=False, kaldi_dir=None):
         self.debug = debug
         self.timesteps = 0
         self.dummy = False
         self.nnetdir = "/group/teaching/asr/labs/tdnnf_mono_net/"
         self.bindir = "/group/teaching/asr/labs/bin/"
         self.nnet = nnet
+        self.loaded_first_rec = loaded_first_rec
         self.state_map = self.load_state_map("{}/conf/pdfsmap".format(self.nnetdir))
         if not kaldi_dir:
             path = ['/group/teaching/asr/labs/bin/lib/',
@@ -74,7 +77,6 @@ class ObservationModel:
         return state_map
 
     def load_audio(self, wav_fn):
-        global loaded_first_rec
         if wav_fn[-3:] != 'wav':
             raise ValueError('Audio must be in wav format')
         if not (os.path.exists(wav_fn) and os.path.isfile(wav_fn)):
@@ -86,7 +88,7 @@ class ObservationModel:
 
         if not self.nnet or not self.nnet.isalive():
             self.nnet = initialize_nn(self.debug)
-        if loaded_first_rec:  # not first load data
+        if self.loaded_first_rec.get_data():  # not first load data
             self.nnet.expect('LOG') # there's a previous line giving logprob over frames
 
         self.nnet.send("{} {}\n".format(utt_name, wav_fn))
@@ -96,7 +98,7 @@ class ObservationModel:
             nn_check_for_errors(self.nnet, self.debug)
         self.post_mat = self.parse_kaldi_post_mat(self.nnet.before)
         self.timesteps = len(self.post_mat)
-        loaded_first_rec = True
+        self.loaded_first_rec.set_data(True)
 
     def parse_kaldi_post_mat(self, mat_str):
         mat_str = mat_str.split('\r\n')
