@@ -122,6 +122,18 @@ class WeightGenerator:
     def get_word_transition_bigram(self, prev_word, next_word):
         return self.weighted(self.lm.get_bigram_word_prob(next_word, prev_word))
     
+    def get_word_mid_pushed(self, words):
+        if not(isinstance(words, list)):
+            return self.get_word_mid(words)
+        
+        
+        best = 0
+        for w in words:
+            tmp = self.lm.get_word_prob(w)
+            if tmp > best:
+                best = tmp
+        return self.weighted(best, True)
+    
 weighter = WeightGenerator()
 
 def parse_lexicon(lex_file):
@@ -263,7 +275,7 @@ def add_word(f, n, init_state, start_state, silence_start, silence_end, word, ph
     f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
     f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
     
-def generate_from_node(f, node, start_state, silence_start, phone_start, n):    
+def generate_from_node(f, node, start_state, silence_start, phone_start, n, current_best):    
     if node.data == "root":
         return
     elif node.data == "eps":
@@ -288,9 +300,12 @@ def generate_from_node(f, node, start_state, silence_start, phone_start, n):
             out_lbl = phone_table.find("<eps>")
             if child.data == "eps":
                 out_lbl = word_table.find(child.out_lbl)
-            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), out_lbl, weighter.get_word_mid_in_subset(word, words), child_transition))
+#             transition_prob = weighter.get_word_mid_in_subset(word, words)
+            new_current_best = weighter.get_word_mid_pushed(word)
+            transition_prob = fst.Weight("log", float(new_current_best) - float(current_best))
+            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), out_lbl, transition_prob, child_transition))
             
-            res += generate_from_node(f, child, start_state, silence_start, child_transition, n)
+            res += generate_from_node(f, child, start_state, silence_start, child_transition, n, new_current_best)
         return res
     else:
         res = []
@@ -303,11 +318,15 @@ def generate_from_node(f, node, start_state, silence_start, phone_start, n):
             res = [(word, last_state)]
         
         for child in node.children:
-            res += generate_from_node(f, child, start_state, silence_start, last_state, n)
+            res += generate_from_node(f, child, start_state, silence_start, last_state, n, current_best)
         
         return res
 
 def generate_recog_from_tree(n = 3):
+#     words = ["peter", "peppers", "peck", "piper"]
+#     for w in words:
+#         print(w, weighter.lm.get_word_prob(w), weighter.weighted(weighter.lm.get_word_prob(w), True))
+
     root = tree_root
     
     f = fst.Fst(weight_type)
@@ -326,13 +345,15 @@ def generate_recog_from_tree(n = 3):
     word_ends = []
     
     for child in root.children:
+        word_init = f.add_state()
         word_start = f.add_state()
-        word = child.words_below
-        word_starts.append((word, word_start))
-        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), word_start))
-        tmp = generate_from_node(f, child, start_state, silence_start, word_start, n)
-#         print(tmp)
-        word_ends += tmp
+        word = child.words_below # all words that come next in this branch
+#         word_starts.append((word, word_start))
+        word_starts.append((word, word_init))
+        f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), word_init))
+        current_best = weighter.get_word_mid_pushed(word)
+        f.add_arc(word_init, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), current_best, word_start))
+        word_ends += generate_from_node(f, child, start_state, silence_start, word_start, n, current_best)
     
     for end in word_ends:
         for start in word_starts:
