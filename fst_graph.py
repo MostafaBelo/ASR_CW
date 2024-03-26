@@ -105,6 +105,9 @@ class WeightGenerator:
     def get_silence_split(self, word):
         return .5
     
+    def get_no_word_silence(self):
+        return self.weighted(.01, True)
+    
     def get_word_end(self, word):
         isFinal = self.lm.get_end_word_prob(word)
         return self.weighted(isFinal, True)
@@ -339,6 +342,7 @@ def generate_recog_from_tree(n = 3):
     silence_end = silence_model(f, silence_start)
     sil_symbol = state_table.find("sil_5")
     f.add_arc(silence_end, fst.Arc(sil_symbol, 0, weighter.get_split(f, silence_end, 1), start_state))
+    f.add_arc(start_state, fst.Arc(0, 0, weighter.get_no_word_silence(), silence_start))
     f.set_final(silence_end)
     
     word_starts = []
