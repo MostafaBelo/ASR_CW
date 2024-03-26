@@ -16,9 +16,12 @@ class LanguageModel:
         self.end_words = {}
         self.words = {}
         
+        self.bigram_words_one = {}
+        
         self.start_words_count = 0
         self.end_words_count = 0
         self.words_count = 0
+        self.bigram_count = 0
         
         self.scan()
     
@@ -46,6 +49,18 @@ class LanguageModel:
             for word in transcription:
                 self.words[word] += 1
             self.words_count += len(transcription)
+            
+            prev = ""
+            for word in transcription:
+                key = f"{word}|{prev}"
+                if key in self.bigram_words_one:
+                    self.bigram_words_one[key] += 1
+                else:
+                    self.bigram_words_one[key] = 0
+                
+                prev = word
+            
+            self.bigram_count = len(self.bigram_words_one)
     
     def getStartWordsFrequency(self):
         return self.start_words
@@ -55,6 +70,9 @@ class LanguageModel:
     
     def getWordsFrequency(self):
         return self.words
+    
+    def getBigramFrequency(self):
+        return self.bigram_words_one
     
     def get_start_word_freq(self, word):
         if isinstance(word, list):
@@ -84,6 +102,27 @@ class LanguageModel:
             if word in self.words:
                 return self.words[word]
             return 0
+        
+    def get_bigram_word_freq(self, word, prev):
+        if isinstance(word, list) and isinstance(prev, list):
+            raise Exception("Invalid arguments for bigram LM")
+        
+        if isinstance(word, list):
+            freq = 0
+            for w in word:
+                freq += self.get_bigram_word_freq(w, prev)
+            return freq
+        
+        if isinstance(prev, list):
+            freq = 0
+            for w in prev:
+                freq += self.get_bigram_word_freq(word, w)
+            return freq
+        
+        key = f"{word}|{prev}"
+        if key in self.bigram_words_one:
+            return self.bigram_words_one[key]
+        return 0
     
     def get_start_word_prob(self, word):
         return self.get_start_word_freq(word) / self.start_words_count
@@ -93,3 +132,6 @@ class LanguageModel:
     
     def get_word_prob(self, word):
         return self.get_word_freq(word) / self.words_count
+    
+    def get_bigram_word_prob(self, word, prev):
+        return self.get_bigram_word_freq(word, prev) / self.bigram_count

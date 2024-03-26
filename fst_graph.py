@@ -10,7 +10,7 @@ from subprocess import check_call
 from IPython.display import Image
 def draw_f(f):
     f.draw('tmp.dot', portrait=True)
-    check_call(['dot','-Tpng','-Gdpi=600','tmp.dot','-o','tmp.png'])
+    check_call(['dot','-Tpng','-Gdpi=1200','tmp.dot','-o','tmp.png'])
     return Image(filename='tmp.png')
 
 class WeightGenerator:
@@ -29,7 +29,7 @@ class WeightGenerator:
     def prob_to_log(self, w):
         if w == 1:
             return 0
-        elif w == 0:
+        elif w <= 0:
             return NLL_ZERO
         return -math.log(w)
     
@@ -118,6 +118,9 @@ class WeightGenerator:
         prob1 = self.lm.get_word_freq(word)
         prob2 = self.lm.get_word_freq(words)
         return self.weighted(prob1 / prob2, True)
+    
+    def get_word_transition_bigram(self, prev_word, next_word):
+        return self.weighted(self.lm.get_bigram_word_prob(next_word, prev_word))
     
 weighter = WeightGenerator()
 
@@ -265,9 +268,10 @@ def generate_from_node(f, node, start_state, silence_start, phone_start, n):
         return
     elif node.data == "eps":
         word = node.out_lbl
-        f.add_arc(phone_start, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+#         f.add_arc(phone_start, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+        f.add_arc(phone_start, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
         f.set_final(phone_start, weighter.get_word_end(word))
-        return
+        return [(word, phone_start)]
     
     phone = node.data
     phone_word = node.getLastWord()
@@ -275,6 +279,7 @@ def generate_from_node(f, node, start_state, silence_start, phone_start, n):
     last_state = generate_phone_wfst(f, phone_start, phone, n, phone_word, isLast)
     
     if node.is_branching():
+        res = []
         for child in node.children:
             word = child.words_below
             words = node.words_below
@@ -285,16 +290,22 @@ def generate_from_node(f, node, start_state, silence_start, phone_start, n):
                 out_lbl = word_table.find(child.out_lbl)
             f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), out_lbl, weighter.get_word_mid_in_subset(word, words), child_transition))
             
-            generate_from_node(f, child, start_state, silence_start, child_transition, n)
+            res += generate_from_node(f, child, start_state, silence_start, child_transition, n)
+        return res
     else:
+        res = []
         if node.out_lbl != "":
             word = node.out_lbl
-            f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
+#             f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_exit(word), start_state))
             f.add_arc(last_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_silence(word), silence_start))
             f.set_final(last_state, weighter.get_word_end(word))
+            
+            res = [(word, last_state)]
         
         for child in node.children:
-            generate_from_node(f, child, start_state, silence_start, last_state, n)
+            res += generate_from_node(f, child, start_state, silence_start, last_state, n)
+        
+        return res
 
 def generate_recog_from_tree(n = 3):
     root = tree_root
@@ -309,12 +320,23 @@ def generate_recog_from_tree(n = 3):
     silence_end = silence_model(f, silence_start)
     sil_symbol = state_table.find("sil_5")
     f.add_arc(silence_end, fst.Arc(sil_symbol, 0, weighter.get_split(f, silence_end, 1), start_state))
+    f.set_final(silence_end)
+    
+    word_starts = []
+    word_ends = []
     
     for child in root.children:
         word_start = f.add_state()
         word = child.words_below
+        word_starts.append((word, word_start))
         f.add_arc(start_state, fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_mid(word), word_start))
-        generate_from_node(f, child, start_state, silence_start, word_start, n)
+        tmp = generate_from_node(f, child, start_state, silence_start, word_start, n)
+#         print(tmp)
+        word_ends += tmp
+    
+    for end in word_ends:
+        for start in word_starts:
+            f.add_arc(end[1], fst.Arc(state_table.find("<eps>"), phone_table.find("<eps>"), weighter.get_word_transition_bigram(start[0], end[0]), start[1]))
         
     return f
     
