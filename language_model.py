@@ -61,6 +61,16 @@ class LanguageModel:
                 prev = word
             
             self.bigram_count = len(self.bigram_words_one)
+            
+#         for w in self.start_words:
+#             s = self.start_words[w]
+#             m = self.words[w]
+#             e = self.end_words[w]
+#             print(f"{w} & {s} & {m} & {e}")
+#         print("start", self.start_words)
+#         print ("end", self.end_words)
+#         print ("mid", self.words)
+#         print("bigram", self.bigram_words_one)
     
     def getStartWordsFrequency(self):
         return self.start_words

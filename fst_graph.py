@@ -459,6 +459,21 @@ def create_wfst(n = 3):
 
     return f
 
+def silence_create():
+    f = fst.Fst("log")
+    silence_start = f.add_state()
+    f.set_start(silence_start)
+    silence_end = silence_model(f, silence_start)
+    sil_symbol = state_table.find("sil_5")
+#     f.add_arc(silence_end, fst.Arc(sil_symbol, 0, weighter.get_split(f, silence_end, 1), start_state))
+#     f.add_arc(start_state, fst.Arc(0, 0, weighter.get_no_word_silence(), silence_start))
+#     f.set_final(silence_end)
+
+    f.set_input_symbols(state_table)
+    f.set_output_symbols(word_table)
+
+    return f
+
 def silence_model(f, start_state):
     s1 = start_state    
     s2 = f.add_state()
